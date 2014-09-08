@@ -5,6 +5,9 @@
     "Benjamin Brown <ben.brown@factmint.com>"
   ],
   "description": "Factmint visualization key/legend design implemented as a Snap.svg plugin",
+  "dependencies": {
+    "color-utils": "https://git.assembla.com/descartes_diaphragm.color-utils.git"
+  },
   "main": "dist/key.js",
   "moduleType": [
     "amd"
