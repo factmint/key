@@ -1,5 +1,5 @@
-define(['color-utils'],
-function(Color) {
+define(['Snap', 'color-utils'],
+function(Snap,   Color) {
 	return Snap.plugin(function(Snap, Element, Paper) {
 		var PADDING = 0.05;
 		var COLUMNS = 3;
