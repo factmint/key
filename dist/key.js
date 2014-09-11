@@ -3,8 +3,11 @@ function(Snap,   Config,   Color) {
 	return Snap.plugin(function(Snap, Element, Paper) {
 		Paper.prototype.key = function(x, y, width, data, maxEntries) {
 
-			var maxEntries = (typeof maxEntries === 'undefined') ? data.length : maxEntries;
-			console.log(maxEntries);
+			if (typeof maxEntries === 'undefined' ||
+				maxEntries > data.length) {
+				maxEntries = data.length;
+			}
+
 			var colorClasses = Color.harmonious(data.length);
 
 			var container = this.rect(x, y, width, 0)
