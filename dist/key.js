@@ -1,8 +1,10 @@
 define(['snap', 'config', 'color-utils'],
 function(Snap,   Config,   Color) {
 	return Snap.plugin(function(Snap, Element, Paper) {
-		Paper.prototype.key = function(x, y, width, data) {
+		Paper.prototype.key = function(x, y, width, data, maxEntries) {
 
+			var maxEntries = (typeof maxEntries === 'undefined') ? data.length : maxEntries;
+			console.log(maxEntries);
 			var colorClasses = Color.harmonious(data.length);
 
 			var container = this.rect(x, y, width, 0)
@@ -25,7 +27,7 @@ function(Snap,   Config,   Color) {
 
 			}
 
-			for (var i = 0; i < data.length; i++) {
+			for (var i = 0; i < maxEntries; i++) {
 				var keyColor;
 				
 				if(i !== 0 && i % Config.KEY_COLUMNS === 0) {
