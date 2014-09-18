@@ -13,7 +13,7 @@ function(Snap,   Config,   Color) {
 	 * @param {Array.<string>} values
 	 * @param {Number} maxValues
 	 */
-	var Key = function (paper, x, y, width, columns, columnWidth, centerItems, values, maxValues, maxValueLength) {
+	var Key = function(paper, x, y, width, columns, columnWidth, centerItems, values, maxValues, maxValueLength) {
 		this._paper = paper;
 		this.node = paper.g();
 		this.x = x;
@@ -35,10 +35,6 @@ function(Snap,   Config,   Color) {
 			this.node = null;
 		},
 		"render": function() {
-			if (!this.node) {
-				this.node = this._paper.g();
-			}
-			
 			var numberOfValues = this.values.length;
 
 			if (typeof this.maxEntries === 'undefined' ||
@@ -52,14 +48,14 @@ function(Snap,   Config,   Color) {
 			
 			var colorClasses = Color.harmonious(numberOfValues)
 			
-			var container = this.node.rect(this.x, this.y, this.width, 10)
+			this.container = this.node.rect(this.x, this.y, this.width, 10)
 				.addClass('fm-key-container')
 				.attr({
 					fill: Config.KEY_NEUTRAL_FILL,
 					stroke: Config.KEY_NEUTRAL_STROKE
 				});
 
-			var items = this.node.g();
+			var items = this.node.g().addClass('fm-key-items');
 
 			var columnOffset = 0;
 			var rowOffset = 0;
@@ -102,9 +98,9 @@ function(Snap,   Config,   Color) {
 			}.bind(this));
 
 			var itemsBBox = items.getBBox();
-			var containerBBox = container.getBBox();
+			var containerBBox = this.container.getBBox();
 
-			container.attr({
+			this.container.attr({
 				height: itemsBBox.height + Config.KEY_PADDING * 2
 			});
 
@@ -112,15 +108,20 @@ function(Snap,   Config,   Color) {
 				items.transform('t' + (containerBBox.width / 2 - itemsBBox.width / 2) + ' 0');
 			}
 
-			console.log(containerBBox.width / 2 - itemsBBox.width / 2)
-
-			var key = this.node.g(container, items)
+			return key = this.node.g(this.container, items)
 				.addClass('fm-key')
 				.attr({
-					strokeDasharray: this.width + ',' + container.attr('height') + ',0,' + this.width + ',0'
+					strokeDasharray: this.width + ',' + containerBBox.height + ',0,' + this.width + ',0'
 				});
 		},
-		"show": function() {}
+		"show": function() {},
+		"setHeight": function(newHeight) {
+			var container = this.node.select('.fm-key-container');
+
+			container.attr({
+				height: newHeight + 'px'
+			});
+		}
 	};
 
 	return Key;
