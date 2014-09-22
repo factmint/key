@@ -106,7 +106,9 @@ function(Snap,   Config,   Color) {
 
 			if (this.centerItems === true) {
 				items.transform('t' + (containerBBox.width / 2 - itemsBBox.width / 2) + ' 0');
-			}
+			} else {
+        items.transform('t' + Config.KEY_SIDE_PADDING + ' 0');
+      }
 
 			return key = this.node.g(this.container, items)
 				.addClass('fm-key')
