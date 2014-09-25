@@ -41,13 +41,13 @@ function(Snap,   Config,   Color) {
 				this.maxEntries > numberOfValues) {
 				this.maxEntries = numberOfValues;
 			}
-			
+
 			if (typeof this.maxValueLength === 'undefined') {
 				this.maxValueLength = Config.KEY_MAX_TEXT_LENGTH;
 			}
-			
+
 			var colorClasses = Color.harmonious(numberOfValues)
-			
+
 			this.container = this.node.rect(this.x, this.y, this.width, 10)
 				.addClass('fm-key-container')
 				.attr({
@@ -91,7 +91,7 @@ function(Snap,   Config,   Color) {
 
 				var itemGroup = this.node.g(colorRect, title)
 					.data('fullText', value[valueIndex])
-				
+
 				items.append(itemGroup);
 				columnOffset += this.columnWidth;
 
@@ -110,7 +110,7 @@ function(Snap,   Config,   Color) {
         items.transform('t' + Config.KEY_SIDE_PADDING + ' 0');
       }
 
-			return key = this.node.g(this.container, items)
+			return this.node.g(this.container, items)
 				.addClass('fm-key')
 				.attr({
 					strokeDasharray: this.width + ',' + containerBBox.height + ',0,' + this.width + ',0'
