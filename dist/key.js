@@ -13,7 +13,19 @@ function(Snap,   Config,   Color) {
 	 * @param {Array.<string>} values
 	 * @param {Number} maxValues
 	 */
-	var Key = function(paper, x, y, width, columns, columnWidth, centerItems, values, maxValues, maxValueLength) {
+	var Key = function(
+		paper,
+		x,
+		y,
+		width,
+		columns,
+		columnWidth,
+		centerItems,
+		values,
+		maxValues,
+		maxValueLength,
+		lastItemIsOther
+	) {
 		this._paper = paper;
 		this.node = paper.g();
 		this.x = x;
@@ -25,6 +37,7 @@ function(Snap,   Config,   Color) {
 		this.values = values;
 		this.maxValues = maxValues;
 		this.maxValueLength = maxValueLength;
+		this.lastItemIsOther = lastItemIsOther;
 	}
 
 	Key.prototype = {
@@ -62,7 +75,13 @@ function(Snap,   Config,   Color) {
 
 			var title;
 			this.values.forEach(function(value, valueIndex) {
-				var keyColor = colorClasses[valueIndex];
+
+				var keyColor;
+				if (valueIndex === this.values.length - 1 && this.lastItemIsOther) {
+					keyColor = 'fm-datum-color-overflow';
+				} else {
+					keyColor = colorClasses[valueIndex];
+				}
 
 				if (valueIndex !== 0 && valueIndex % this.columns === 0) {
 					columnOffset = 0;
@@ -112,8 +131,8 @@ function(Snap,   Config,   Color) {
 
 			return this.node.g(this.container, items)
 				.addClass('fm-key')
-				.attr({
-					strokeDasharray: this.width + ',' + containerBBox.height + ',0,' + this.width + ',0'
+				.attr({ // Assume the height will never be more than 100 * the width
+					strokeDasharray: this.width + ',' + containerBBox.height + ',0,' + this.width * 100+ ',0'
 				});
 		},
 		"show": function() {},
