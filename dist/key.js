@@ -109,7 +109,9 @@ function(Snap,   Config,   Color) {
 					});
 
 				var itemGroup = this.node.g(colorRect, title)
-					.data('fullText', value[valueIndex])
+					.data('fullText', value[valueIndex]);
+
+        trimTitleToFitWidth( itemGroup, this.columnWidth - Config.KEY_TEXT_SPACING );
 
 				items.append(itemGroup);
 				columnOffset += this.columnWidth;
@@ -134,6 +136,45 @@ function(Snap,   Config,   Color) {
 				.attr({ // Assume the height will never be more than 100 * the width
 					strokeDasharray: this.width + ',' + containerBBox.height + ',0,' + this.width * 100+ ',0'
 				});
+
+      /**
+       * Trim series text and adds ellipsis 
+       * @param  {Snap.Element} itemGroup   
+       * @param  {Number} columnWidth
+       */
+      function trimTitleToFitWidth( itemGroup, columnWidth ){
+
+        var itemGroupWidth = itemGroup.getBBox().width;
+
+        if( itemGroupWidth <= columnWidth ){
+          return;
+        }
+
+        var titleElement = itemGroup.select("text");
+        var titleText = titleElement.attr("text");
+        var minCharacters = 5; // 2 characters + 3 (...)
+        var keepTrimming = true;
+
+        titleText = titleText.substr( 0, titleText.length - 3 ) + "...";
+
+        while( keepTrimming ){
+
+          // Trim the text
+          titleText = titleText.substr( 0, titleText.length - 4 ) + "...";
+          titleElement.attr("text", titleText);
+
+          // Measure
+          itemGroupWidth = itemGroup.getBBox().width;
+
+          // Check if we've hit our limit of characters trimmed or if small enough
+          if( itemGroupWidth <= columnWidth || titleText.length === minCharacters ){
+            keepTrimming = false;
+          }
+
+        }
+
+      }
+
 		},
 		"show": function() {},
 		"setHeight": function(newHeight) {
