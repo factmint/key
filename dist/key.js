@@ -96,11 +96,11 @@ function(Snap,   Config,   Color) {
 					var labelText = value;
 				}
 
-				var colorRect = this.node.rect(this.x + columnOffset, this.y + Config.KEY_PADDING + rowOffset, 13, 13)
+				var colorRect = this.node.rect(this.x + columnOffset, this.y + Config.KEY_PADDING_TOP + rowOffset, 13, 13)
 					.addClass(keyColor);
 				title = this.node.text(
 					this.x + Config.KEY_TEXT_SPACING + colorRect.getBBox().width + columnOffset,
-					this.y + Config.KEY_PADDING + rowOffset + parseInt(colorRect.attr('height'), 10) - 1,
+					this.y + Config.KEY_PADDING_TOP + rowOffset + parseInt(colorRect.attr('height'), 10) - 1,
 					labelText
 				)
 					.attr({
@@ -120,13 +120,13 @@ function(Snap,   Config,   Color) {
 			var containerBBox = this.container.getBBox();
 
 			this.container.attr({
-				height: itemsBBox.height + Config.KEY_PADDING * 2
+				height: itemsBBox.height + Config.KEY_PADDING_TOP + Config.KEY_PADDING_BOTTOM
 			});
 
 			if (this.centerItems === true) {
 				items.transform('t' + (containerBBox.width / 2 - itemsBBox.width / 2) + ' 0');
 			} else {
-        items.transform('t' + Config.KEY_SIDE_PADDING + ' 0');
+        items.transform('t' + Config.KEY_PADDING_LEFT + ' 0');
       }
 
 			return this.node.g(this.container, items)
