@@ -24,7 +24,8 @@ function(Snap,   Config,   Color) {
 		values,
 		maxValues,
 		maxValueLength,
-		lastItemIsOther
+		lastItemIsOther,
+		colorClasses
 	) {
 		this._paper = paper;
 		this.node = paper.g();
@@ -38,6 +39,7 @@ function(Snap,   Config,   Color) {
 		this.maxValues = maxValues;
 		this.maxValueLength = maxValueLength;
 		this.lastItemIsOther = lastItemIsOther;
+		this.colorClasses = colorClasses;
 	}
 
 	Key.prototype = {
@@ -59,7 +61,12 @@ function(Snap,   Config,   Color) {
 				this.maxValueLength = Config.KEY_MAX_TEXT_LENGTH;
 			}
 
-			var colorClasses = Color.harmonious(numberOfValues)
+			var colorClasses;
+			if (! this.colorClasses) {
+				colorClasses = Color.harmonious(numberOfValues);
+			} else {
+				colorClasses = this.colorClasses;
+			}
 
 			this.container = this.node.rect(this.x, this.y, this.width, 10)
 				.addClass('fm-key-container')
