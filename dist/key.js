@@ -52,9 +52,9 @@ function(Snap,   Config,   Color) {
 		"render": function() {
 			var numberOfValues = this.values.length;
 
-			if (typeof this.maxEntries === 'undefined' ||
-				this.maxEntries > numberOfValues) {
-				this.maxEntries = numberOfValues;
+			if (typeof this.maxValues === 'undefined' ||
+				this.maxValues > numberOfValues) {
+				this.maxValues = numberOfValues;
 			}
 
 			if (typeof this.maxValueLength === 'undefined') {
@@ -82,46 +82,47 @@ function(Snap,   Config,   Color) {
 
 			var title;
 			this.values.forEach(function(value, valueIndex) {
+				if (valueIndex < this.maxValues) {
+					var keyColor;
+					if (valueIndex === this.values.length - 1 && this.lastItemIsOther) {
+						keyColor = 'fm-datum-color-overflow';
+					} else {
+						keyColor = colorClasses[valueIndex];
+					}
 
-				var keyColor;
-				if (valueIndex === this.values.length - 1 && this.lastItemIsOther) {
-					keyColor = 'fm-datum-color-overflow';
-				} else {
-					keyColor = colorClasses[valueIndex];
+					if (valueIndex !== 0 && valueIndex % this.columns === 0) {
+						columnOffset = 0;
+						rowOffset += title.getBBox().height + Config.KEY_ROWSPACING;
+					}
+
+					var truncated = false;
+					if (value.length > this.maxValueLength) {
+						var labelText = value.substring(0, this.maxValueLength - 3) + '...';
+						truncated = true;
+					} else {
+						var labelText = value;
+					}
+
+					var colorRect = this.node.rect(this.x + columnOffset, this.y + Config.KEY_PADDING_TOP + rowOffset, 13, 13)
+						.addClass(keyColor);
+					title = this.node.text(
+						this.x + Config.KEY_TEXT_SPACING + colorRect.getBBox().width + columnOffset,
+						this.y + Config.KEY_PADDING_TOP + rowOffset + parseInt(colorRect.attr('height'), 10) - 1,
+						labelText
+					)
+						.attr({
+							'font-family': Config.FONT_FAMILY,
+							'font-size': Config.TEXT_SIZE_SMALL
+						});
+
+					var itemGroup = this.node.g(colorRect, title)
+						.data('fullText', value[valueIndex]);
+
+	        trimTitleToFitWidth( itemGroup, this.columnWidth - Config.KEY_TEXT_SPACING );
+
+					items.append(itemGroup);
+					columnOffset += this.columnWidth;
 				}
-
-				if (valueIndex !== 0 && valueIndex % this.columns === 0) {
-					columnOffset = 0;
-					rowOffset += title.getBBox().height + Config.KEY_ROWSPACING;
-				}
-
-				var truncated = false;
-				if (value.length > this.maxValueLength) {
-					var labelText = value.substring(0, this.maxValueLength - 3) + '...';
-					truncated = true;
-				} else {
-					var labelText = value;
-				}
-
-				var colorRect = this.node.rect(this.x + columnOffset, this.y + Config.KEY_PADDING_TOP + rowOffset, 13, 13)
-					.addClass(keyColor);
-				title = this.node.text(
-					this.x + Config.KEY_TEXT_SPACING + colorRect.getBBox().width + columnOffset,
-					this.y + Config.KEY_PADDING_TOP + rowOffset + parseInt(colorRect.attr('height'), 10) - 1,
-					labelText
-				)
-					.attr({
-						'font-family': Config.FONT_FAMILY,
-						'font-size': Config.TEXT_SIZE_SMALL
-					});
-
-				var itemGroup = this.node.g(colorRect, title)
-					.data('fullText', value[valueIndex]);
-
-        trimTitleToFitWidth( itemGroup, this.columnWidth - Config.KEY_TEXT_SPACING );
-
-				items.append(itemGroup);
-				columnOffset += this.columnWidth;
 
 			}.bind(this));
 
