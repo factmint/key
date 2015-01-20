@@ -162,12 +162,12 @@ function(Snap,   Config,   Color) {
         var minCharacters = 5; // 2 characters + 3 (...)
         var keepTrimming = true;
 
-        titleText = titleText.substr( 0, titleText.length - 3 ) + "...";
+        titleText = titleText.substr( 0, titleText.length - 1 ) + "…";
 
         while( keepTrimming ){
 
           // Trim the text
-          titleText = titleText.substr( 0, titleText.length - 4 ) + "...";
+          titleText = titleText.substr( 0, titleText.length - 2 ) + "…";
           titleElement.attr("text", titleText);
 
           // Measure
