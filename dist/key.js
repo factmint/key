@@ -97,7 +97,7 @@ function(Snap,   Config,   Color) {
 
 				var truncated = false;
 				if (value.length > this.maxValueLength) {
-					var labelText = value.substring(0, this.maxValueLength - 3) + '...';
+					var labelText = value.substring(0, this.maxValueLength - 1) + '…';
 					truncated = true;
 				} else {
 					var labelText = value;
@@ -159,7 +159,7 @@ function(Snap,   Config,   Color) {
 
         var titleElement = itemGroup.select("text");
         var titleText = titleElement.attr("text");
-        var minCharacters = 5; // 2 characters + 3 (...)
+        var minCharacters = 5; // 4 characters + 1 (…)
         var keepTrimming = true;
 
         titleText = titleText.substr( 0, titleText.length - 1 ) + "…";
