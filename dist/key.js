@@ -167,7 +167,7 @@ function(Snap,   Config,   Color) {
 				var titleText = titleElement.attr("text");
 				var minCharacters = 5; // 4 characters + 1 (…)
 				var keepTrimming = true;
-
+				
 				titleText = titleText.substr(0, titleText.length - 1) + "…";
 
 				while(keepTrimming) {
