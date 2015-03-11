@@ -81,48 +81,53 @@ function(Snap,   Config,   Color) {
 			var rowOffset = 0;
 
 			var title;
-			this.values.forEach(function(value, valueIndex) {
-				if (valueIndex < this.maxValues) {
-					var keyColor;
-					if (valueIndex === this.values.length - 1 && this.lastItemIsOther) {
-						keyColor = 'fm-datum-color-overflow';
-					} else {
-						keyColor = colorClasses[valueIndex];
-					}
+			this.values.every(function(value, valueIndex) {
 
-					if (valueIndex !== 0 && valueIndex % this.columns === 0) {
-						columnOffset = 0;
-						rowOffset += title.getBBox().height + Config.KEY_ROWSPACING;
-					}
-
-					var truncated = false;
-					if (value.length > this.maxValueLength) {
-						var labelText = value.substring(0, this.maxValueLength - 3) + '...';
-						truncated = true;
-					} else {
-						var labelText = value;
-					}
-
-					var colorRect = this.node.rect(this.x + columnOffset, this.y + Config.KEY_PADDING_TOP + rowOffset, 13, 13)
-						.addClass(keyColor);
-					title = this.node.text(
-						this.x + Config.KEY_TEXT_SPACING + colorRect.getBBox().width + columnOffset,
-						this.y + Config.KEY_PADDING_TOP + rowOffset + parseInt(colorRect.attr('height'), 10) - 1,
-						labelText
-					)
-						.attr({
-							'font-family': Config.FONT_FAMILY,
-							'font-size': Config.TEXT_SIZE_SMALL
-						});
-
-					var itemGroup = this.node.g(colorRect, title)
-						.data('fullText', value[valueIndex]);
-
-	        trimTitleToFitWidth( itemGroup, this.columnWidth - Config.KEY_TEXT_SPACING );
-
-					items.append(itemGroup);
-					columnOffset += this.columnWidth;
+				if (valueIndex === this.maxValues) {
+					return false;
 				}
+
+				var keyColor;
+				if (valueIndex === this.values.length - 1 && this.lastItemIsOther) {
+					keyColor = 'fm-datum-color-overflow';
+				} else {
+					keyColor = colorClasses[valueIndex];
+				}
+
+				if (valueIndex !== 0 && valueIndex % this.columns === 0) {
+					columnOffset = 0;
+					rowOffset += title.getBBox().height + Config.KEY_ROWSPACING;
+				}
+
+				var truncated = false;
+				if (value.length > this.maxValueLength) {
+					var labelText = value.substring(0, this.maxValueLength - 1) + '…';
+					truncated = true;
+				} else {
+					var labelText = value;
+				}
+
+				var colorRect = this.node.rect(this.x + columnOffset, this.y + Config.KEY_PADDING_TOP + rowOffset, 13, 13)
+					.addClass(keyColor);
+				title = this.node.text(
+					this.x + Config.KEY_TEXT_SPACING + colorRect.getBBox().width + columnOffset,
+					this.y + Config.KEY_PADDING_TOP + rowOffset + parseInt(colorRect.attr('height'), 10) - 1,
+					labelText
+				)
+					.attr({
+						'font-family': Config.FONT_FAMILY,
+						'font-size': Config.TEXT_SIZE_SMALL
+					});
+
+				var itemGroup = this.node.g(colorRect, title)
+					.data('fullText', value[valueIndex]);
+
+				trimTitleToFitWidth(itemGroup, this.columnWidth - Config.KEY_TEXT_SPACING);
+
+				items.append(itemGroup);
+				columnOffset += this.columnWidth;
+
+				return true;
 
 			}.bind(this));
 
@@ -136,8 +141,8 @@ function(Snap,   Config,   Color) {
 			if (this.centerItems === true) {
 				items.transform('t' + (containerBBox.width / 2 - itemsBBox.width / 2) + ' 0');
 			} else {
-        items.transform('t' + Config.KEY_PADDING_LEFT + ' 0');
-      }
+				items.transform('t' + Config.KEY_PADDING_LEFT + ' 0');
+			}
 
 			return this.node.g(this.container, items)
 				.addClass('fm-key')
@@ -145,43 +150,41 @@ function(Snap,   Config,   Color) {
 					strokeDasharray: this.width + ',' + containerBBox.height + ',0,' + this.width * 100+ ',0'
 				});
 
-      /**
-       * Trim series text and adds ellipsis 
-       * @param  {Snap.Element} itemGroup   
-       * @param  {Number} columnWidth
-       */
-      function trimTitleToFitWidth( itemGroup, columnWidth ){
+			/**
+			* Trim series text and adds ellipsis 
+			* @param  {Snap.Element} itemGroup   
+			* @param  {Number} columnWidth
+			*/
+			function trimTitleToFitWidth(itemGroup, columnWidth) {
 
-        var itemGroupWidth = itemGroup.getBBox().width;
+				var itemGroupWidth = itemGroup.getBBox().width;
 
-        if( itemGroupWidth <= columnWidth ){
-          return;
-        }
+				if (itemGroupWidth <= columnWidth) {
+					return;
+				}
 
-        var titleElement = itemGroup.select("text");
-        var titleText = titleElement.attr("text");
-        var minCharacters = 5; // 2 characters + 3 (...)
-        var keepTrimming = true;
+				var titleElement = itemGroup.select("text");
+				var titleText = titleElement.attr("text");
+				var minCharacters = 5; // 4 characters + 1 (…)
+				var keepTrimming = true;
 
-        titleText = titleText.substr( 0, titleText.length - 3 ) + "...";
+				titleText = titleText.substr(0, titleText.length - 1) + "…";
 
-        while( keepTrimming ){
+				while(keepTrimming) {
 
-          // Trim the text
-          titleText = titleText.substr( 0, titleText.length - 4 ) + "...";
-          titleElement.attr("text", titleText);
+					// Trim the text
+					titleText = titleText.substr(0, titleText.length - 2) + "…";
+					titleElement.attr("text", titleText);
 
-          // Measure
-          itemGroupWidth = itemGroup.getBBox().width;
+					// Measure
+					itemGroupWidth = itemGroup.getBBox().width;
 
-          // Check if we've hit our limit of characters trimmed or if small enough
-          if( itemGroupWidth <= columnWidth || titleText.length === minCharacters ){
-            keepTrimming = false;
-          }
-
-        }
-
-      }
+					// Check if we've hit our limit of characters trimmed or if small enough
+					if (itemGroupWidth <= columnWidth || titleText.length === minCharacters) {
+						keepTrimming = false;
+					}
+				}
+			}
 
 		},
 		"show": function() {},
