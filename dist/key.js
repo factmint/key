@@ -52,9 +52,9 @@ function(Snap,   Config,   Color) {
 		"render": function() {
 			var numberOfValues = this.values.length;
 
-			if (typeof this.maxEntries === 'undefined' ||
-				this.maxEntries > numberOfValues) {
-				this.maxEntries = numberOfValues;
+			if (typeof this.maxValues === 'undefined' ||
+				this.maxValues > numberOfValues) {
+				this.maxValues = numberOfValues;
 			}
 
 			if (typeof this.maxValueLength === 'undefined') {
@@ -81,7 +81,11 @@ function(Snap,   Config,   Color) {
 			var rowOffset = 0;
 
 			var title;
-			this.values.forEach(function(value, valueIndex) {
+			this.values.every(function(value, valueIndex) {
+
+				if (valueIndex === this.maxValues) {
+					return false;
+				}
 
 				var keyColor;
 				if (valueIndex === this.values.length - 1 && this.lastItemIsOther) {
@@ -118,10 +122,12 @@ function(Snap,   Config,   Color) {
 				var itemGroup = this.node.g(colorRect, title)
 					.data('fullText', value[valueIndex]);
 
-        trimTitleToFitWidth( itemGroup, this.columnWidth - Config.KEY_TEXT_SPACING );
+				trimTitleToFitWidth(itemGroup, this.columnWidth - Config.KEY_TEXT_SPACING);
 
 				items.append(itemGroup);
 				columnOffset += this.columnWidth;
+
+				return true;
 
 			}.bind(this));
 
@@ -135,8 +141,8 @@ function(Snap,   Config,   Color) {
 			if (this.centerItems === true) {
 				items.transform('t' + (containerBBox.width / 2 - itemsBBox.width / 2) + ' 0');
 			} else {
-        items.transform('t' + Config.KEY_PADDING_LEFT + ' 0');
-      }
+				items.transform('t' + Config.KEY_PADDING_LEFT + ' 0');
+			}
 
 			return this.node.g(this.container, items)
 				.addClass('fm-key')
@@ -144,43 +150,41 @@ function(Snap,   Config,   Color) {
 					strokeDasharray: this.width + ',' + containerBBox.height + ',0,' + this.width * 100+ ',0'
 				});
 
-      /**
-       * Trim series text and adds ellipsis 
-       * @param  {Snap.Element} itemGroup   
-       * @param  {Number} columnWidth
-       */
-      function trimTitleToFitWidth( itemGroup, columnWidth ){
+			/**
+			* Trim series text and adds ellipsis 
+			* @param  {Snap.Element} itemGroup   
+			* @param  {Number} columnWidth
+			*/
+			function trimTitleToFitWidth(itemGroup, columnWidth) {
 
-        var itemGroupWidth = itemGroup.getBBox().width;
+				var itemGroupWidth = itemGroup.getBBox().width;
 
-        if( itemGroupWidth <= columnWidth ){
-          return;
-        }
+				if (itemGroupWidth <= columnWidth) {
+					return;
+				}
 
-        var titleElement = itemGroup.select("text");
-        var titleText = titleElement.attr("text");
-        var minCharacters = 5; // 4 characters + 1 (…)
-        var keepTrimming = true;
+				var titleElement = itemGroup.select("text");
+				var titleText = titleElement.attr("text");
+				var minCharacters = 5; // 4 characters + 1 (…)
+				var keepTrimming = true;
+				
+				titleText = titleText.substr(0, titleText.length - 1) + "…";
 
-        titleText = titleText.substr( 0, titleText.length - 1 ) + "…";
+				while(keepTrimming) {
 
-        while( keepTrimming ){
+					// Trim the text
+					titleText = titleText.substr(0, titleText.length - 2) + "…";
+					titleElement.attr("text", titleText);
 
-          // Trim the text
-          titleText = titleText.substr( 0, titleText.length - 2 ) + "…";
-          titleElement.attr("text", titleText);
+					// Measure
+					itemGroupWidth = itemGroup.getBBox().width;
 
-          // Measure
-          itemGroupWidth = itemGroup.getBBox().width;
-
-          // Check if we've hit our limit of characters trimmed or if small enough
-          if( itemGroupWidth <= columnWidth || titleText.length === minCharacters ){
-            keepTrimming = false;
-          }
-
-        }
-
-      }
+					// Check if we've hit our limit of characters trimmed or if small enough
+					if (itemGroupWidth <= columnWidth || titleText.length === minCharacters) {
+						keepTrimming = false;
+					}
+				}
+			}
 
 		},
 		"show": function() {},
